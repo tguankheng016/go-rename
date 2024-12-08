@@ -105,7 +105,7 @@ func copyItems(fs afero.Fs) error {
 	}
 
 	for _, item := range directoriesToCopy {
-		err := copyDirectory(fs, item.src, item.dest)
+		err := copyDirectoriesAndFiles(fs, item.src, item.dest)
 		if err != nil {
 			return fmt.Errorf("error copying from %s to %s: %w", item.src, item.dest, err)
 		}
@@ -115,7 +115,17 @@ func copyItems(fs afero.Fs) error {
 }
 
 // CopyDirectory copies a source folder or file to the destination
-func copyDirectory(fs afero.Fs, src, dest string) error {
+func copyDirectoriesAndFiles(fs afero.Fs, src, dest string) error {
+	// Check if the source exists
+	exists, err := afero.Exists(fs, src)
+	if err != nil {
+		return err
+	}
+
+	if !exists {
+		return nil
+	}
+
 	info, err := fs.Stat(src)
 	if err != nil {
 		return err
@@ -144,7 +154,7 @@ func copyDirectory(fs afero.Fs, src, dest string) error {
 		for _, file := range files {
 			srcFile := filepath.Join(src, file.Name())
 			destFile := filepath.Join(dest, file.Name())
-			err := copyDirectory(fs, srcFile, destFile)
+			err := copyDirectoriesAndFiles(fs, srcFile, destFile)
 			if err != nil {
 				return err
 			}
