@@ -49,7 +49,7 @@ func Execute() {
 	rootCmd.Flags().StringP("value", "v", "", "The new name or value for the key.")
 
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintf(os.Stderr, "Oops. An error while executing Zero '%s'\n", err)
+		fmt.Fprintf(os.Stderr, "Oops. An error while executing gk-rename '%s'\n", err)
 		os.Exit(1)
 	}
 }
